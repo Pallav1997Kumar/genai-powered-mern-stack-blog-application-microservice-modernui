@@ -1,0 +1,683 @@
+const httpClient = require("../utils/http-client.js");
+const devLogger = require("../utils/dev-logger.js");
+
+const { BLOG_POST_SERVICE } = require("../config/services.js");
+const createServiceError = require("../utils/service-error.js");
+const { BlogPostServiceErrorMessage } = require("../constants/error-message.constant.js");
+
+
+const FILE_NAME = "blog-post.service.js";
+
+
+
+// ===============================
+// Category Routes
+// ===============================
+
+
+// ============================================================
+// Get Four Blog Posts By Category Code Starts
+// ============================================================
+async function getFourBlogPostByCategory(categoryID){
+    devLogger.info(`[${FILE_NAME}] Get four blog posts by category request started`);
+    try{
+        devLogger.info(`[${FILE_NAME}] Calling blog post service to fetch four posts by category`);
+        const response = await httpClient.get(
+            `${BLOG_POST_SERVICE}/api/blog-post/category/four-blog-post/${categoryID}`
+        );
+
+        devLogger.info(`[${FILE_NAME}] Four blog posts by category response received successfully`);
+        devLogger.success(`[${FILE_NAME}] Four blog posts by category fetched successfully`);
+
+        devLogger.info(`[${FILE_NAME}] Returning four blog posts by category response`);
+        return response.data;
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to fetch four blog posts by category`, error);
+        devLogger.warn(`[${FILE_NAME}] Get four blog posts by category request could not be completed`);
+        throw createServiceError(BlogPostServiceErrorMessage.GET_FOUR_BLOG_POST_BY_CATEGORY_FAILED, error);
+    }
+};
+// ============================================================
+// Get Four Blog Posts By Category Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Get Category Posts With Pagination Code Starts
+// ============================================================
+async function getCategoryPostPagination(categoryID, params = {}){
+    devLogger.info(`[${FILE_NAME}] Get category posts with pagination request started`);
+    try{
+        devLogger.info(`[${FILE_NAME}] Calling blog post service for category post pagination`);
+        const response = await httpClient.get(
+            `${BLOG_POST_SERVICE}/api/blog-post/category/pagination/${categoryID}`,
+            {
+                params
+            }
+        );
+
+        devLogger.info(`[${FILE_NAME}] Category post pagination response received successfully`);
+        devLogger.success(`[${FILE_NAME}] Category posts pagination fetched successfully`);
+
+        devLogger.info(`[${FILE_NAME}] Returning category post pagination response`);
+        return response.data;
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to fetch category posts pagination`, error);
+        devLogger.warn(`[${FILE_NAME}] Category post pagination request could not be completed`);
+        throw createServiceError(BlogPostServiceErrorMessage.GET_CATEGORY_POST_PAGINATION_FAILED, error);
+    }
+};
+// ============================================================
+// Get Category Posts With Pagination Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Get Unique Category IDs Code Starts
+// ============================================================
+async function getUniqueCategoryIds(){
+    devLogger.info(`[${FILE_NAME}] Get unique category IDs request started`);
+    try{
+        devLogger.info(`[${FILE_NAME}] Calling blog post service to fetch unique category IDs`);
+        const response = await httpClient.get(
+            `${BLOG_POST_SERVICE}/api/blog-post/category/unique-category-ids`
+        );
+
+        devLogger.info(`[${FILE_NAME}] Unique category IDs response received successfully`);
+        devLogger.success(`[${FILE_NAME}] Unique category IDs fetched successfully`);
+
+        devLogger.info(`[${FILE_NAME}] Returning unique category IDs response`);
+        return response.data;
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to fetch unique category IDs`, error);
+        devLogger.warn(`[${FILE_NAME}] Get unique category IDs request could not be completed`);
+        throw createServiceError(BlogPostServiceErrorMessage.GET_UNIQUE_CATEGORY_IDS_FAILED, error);
+    }
+};
+// ============================================================
+// Get Unique Category IDs Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Get Unique Users By Category Code Starts
+// ============================================================
+async function getUniqueUsersByCategory(categoryID){
+    devLogger.info(`[${FILE_NAME}] Get unique users by category request started`);
+    try{
+        devLogger.info(`[${FILE_NAME}] Calling blog post service to fetch unique users by category`);
+        const response = await httpClient.get(
+            `${BLOG_POST_SERVICE}/api/blog-post/category/unique-users/${categoryID}`
+        );
+
+        devLogger.info(`[${FILE_NAME}] Unique users by category response received successfully`);
+        devLogger.success(`[${FILE_NAME}] Unique users by category fetched successfully`);
+
+        devLogger.info(`[${FILE_NAME}] Returning unique users by category response`);
+        return response.data;
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to fetch unique users by category`, error);
+        devLogger.warn(`[${FILE_NAME}] Get unique users by category request could not be completed`);
+        throw createServiceError(BlogPostServiceErrorMessage.GET_UNIQUE_USERS_BY_CATEGORY_FAILED, error);
+    }
+};
+// ============================================================
+// Get Unique Users By Category Code Ends
+// ============================================================
+
+
+
+// ===============================
+// Filter Sort Routes
+// ===============================
+
+
+// ============================================================
+// Filter Sort Pagination Code Starts
+// ============================================================
+async function filterSortPagination(data){
+    devLogger.info(`[${FILE_NAME}] Filter and sort pagination request started`);
+    try{
+        devLogger.info(`[${FILE_NAME}] Calling blog post service for filter and sort pagination`);
+        const response = await httpClient.post(
+            `${BLOG_POST_SERVICE}/api/blog-post/filter-sort/filter-sort-pagination`,
+            data
+        );
+
+        devLogger.info(`[${FILE_NAME}] Filter and sort pagination response received successfully`);
+        devLogger.success(`[${FILE_NAME}] Blog post filter and sort pagination completed successfully`);
+
+        devLogger.info(`[${FILE_NAME}] Returning filter and sort pagination response`);
+        return response.data;
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to filter and sort blog posts`, error);
+        devLogger.warn(`[${FILE_NAME}] Filter and sort blog posts request could not be completed`);
+        throw createServiceError(BlogPostServiceErrorMessage.FILTER_SORT_PAGINATION_FAILED, error);
+    }
+};
+// ============================================================
+// Filter Sort Pagination Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Filter Sort Pagination By User Code Starts
+// ============================================================
+async function filterSortPaginationByUser(userID, data){
+    devLogger.info(`[${FILE_NAME}] Filter and sort pagination by user request started`);
+    try{
+        devLogger.info(`[${FILE_NAME}] Calling blog post service for user filter and sort pagination`);
+        const response = await httpClient.post(
+            `${BLOG_POST_SERVICE}/api/blog-post/filter-sort/filter-sort-pagination/user/${userID}`,
+            data
+        );
+
+        devLogger.info(`[${FILE_NAME}] User filter and sort pagination response received successfully`);
+        devLogger.success(`[${FILE_NAME}] User blog post filter and sort pagination completed successfully`);
+
+        devLogger.info(`[${FILE_NAME}] Returning user filter and sort pagination response`);
+        return response.data;
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to filter user blog posts`, error);
+        devLogger.warn(`[${FILE_NAME}] User blog post filter and sort request could not be completed`);
+        throw createServiceError(BlogPostServiceErrorMessage.FILTER_SORT_PAGINATION_BY_USER_FAILED, error);
+    }
+};
+// ============================================================
+// Filter Sort Pagination By User Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Filter Sort Pagination By Category Code Starts
+// ============================================================
+async function filterSortPaginationByCategory(categoryID, data){
+    devLogger.info(`[${FILE_NAME}] Filter and sort pagination by category request started`);
+    try{
+        devLogger.info(`[${FILE_NAME}] Calling blog post service for category filter and sort pagination`);
+        const response = await httpClient.post(
+            `${BLOG_POST_SERVICE}/api/blog-post/filter-sort/filter-sort-pagination/category/${categoryID}`,
+            data
+        );
+
+        devLogger.info(`[${FILE_NAME}] Category filter and sort pagination response received successfully`);
+        devLogger.success(`[${FILE_NAME}] Category blog post filter and sort pagination completed successfully`);
+
+        devLogger.info(`[${FILE_NAME}] Returning category filter and sort pagination response`);
+        return response.data;
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to filter category blog posts`, error);
+        devLogger.warn(`[${FILE_NAME}] Category blog post filter and sort request could not be completed`);
+        throw createServiceError(BlogPostServiceErrorMessage.FILTER_SORT_PAGINATION_BY_CATEGORY_FAILED, error);
+    }
+};
+// ============================================================
+// Filter Sort Pagination By Category Code Ends
+// ============================================================
+
+
+
+// ===============================
+// Read Routes
+// ===============================
+
+
+// ============================================================
+// Get All Blog Posts Code Starts
+// ============================================================
+async function getAllBlogPosts(){
+    devLogger.info(`[${FILE_NAME}] Get all blog posts request started`);
+    try{
+        devLogger.info(`[${FILE_NAME}] Calling blog post service to fetch all blog posts`);
+        const response = await httpClient.get(
+            `${BLOG_POST_SERVICE}/api/blog-post/read/all-blog-post`
+        );
+
+        devLogger.info(`[${FILE_NAME}] All blog posts response received successfully`);
+        devLogger.success(`[${FILE_NAME}] All blog posts fetched successfully`);
+
+        devLogger.info(`[${FILE_NAME}] Returning all blog posts response`);
+        return response.data;
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to fetch blog posts`, error);
+        devLogger.warn(`[${FILE_NAME}] Get all blog posts request could not be completed`);
+        throw createServiceError(BlogPostServiceErrorMessage.GET_ALL_BLOG_POSTS_FAILED, error);
+    }
+};
+// ============================================================
+// Get All Blog Posts Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Get Four Blog Posts Code Starts
+// ============================================================
+async function getFourBlogPosts(){
+    devLogger.info(`[${FILE_NAME}] Get four blog posts request started`);
+    try{
+        devLogger.info(`[${FILE_NAME}] Calling blog post service to fetch four blog posts`);
+        const response = await httpClient.get(
+            `${BLOG_POST_SERVICE}/api/blog-post/read/four-blog-post`
+        );
+
+        devLogger.info(`[${FILE_NAME}] Four blog posts response received successfully`);
+        devLogger.success(`[${FILE_NAME}] Four blog posts fetched successfully`);
+
+        devLogger.info(`[${FILE_NAME}] Returning four blog posts response`);
+        return response.data;
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to fetch blog posts`, error);
+        devLogger.warn(`[${FILE_NAME}] Get four blog posts request could not be completed`);
+        throw createServiceError(BlogPostServiceErrorMessage.GET_FOUR_BLOG_POSTS_FAILED, error);
+    }
+};
+// ============================================================
+// Get Four Blog Posts Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Get Blog Post By ID Code Starts
+// ============================================================
+async function getBlogPostById(postID){
+    devLogger.info(`[${FILE_NAME}] Get blog post by ID request started`);
+    try{
+        devLogger.info(`[${FILE_NAME}] Calling blog post service to fetch blog post by ID`);
+        const response = await httpClient.get(
+            `${BLOG_POST_SERVICE}/api/blog-post/read/post/${postID}`
+        );
+
+        devLogger.info(`[${FILE_NAME}] Blog post by ID response received successfully`);
+        devLogger.success(`[${FILE_NAME}] Blog post fetched successfully`);
+
+        devLogger.info(`[${FILE_NAME}] Returning blog post by ID response`);
+        return response.data;
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to fetch blog post`, error);
+        devLogger.warn(`[${FILE_NAME}] Get blog post by ID request could not be completed`);
+        throw createServiceError(BlogPostServiceErrorMessage.GET_BLOG_POST_BY_ID_FAILED, error);
+    }
+};
+// ============================================================
+// Get Blog Post By ID Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Get Blog Post Pagination Code Starts
+// ============================================================
+async function getBlogPostPagination(params = {}){
+    devLogger.info(`[${FILE_NAME}] Get blog post pagination request started`);
+    try{
+        devLogger.info(`[${FILE_NAME}] Calling blog post service for blog post pagination`);
+        const response = await httpClient.get(
+            `${BLOG_POST_SERVICE}/api/blog-post/read/pagination`,
+            {
+                params
+            }
+        );
+
+        devLogger.info(`[${FILE_NAME}] Blog post pagination response received successfully`);
+        devLogger.success(`[${FILE_NAME}] Blog post pagination fetched successfully`);
+
+        devLogger.info(`[${FILE_NAME}] Returning blog post pagination response`);
+        return response.data;
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to fetch blog post pagination`, error);
+        devLogger.warn(`[${FILE_NAME}] Blog post pagination request could not be completed`);
+        throw createServiceError(BlogPostServiceErrorMessage.GET_BLOG_POST_PAGINATION_FAILED, error);
+    }
+};
+// ============================================================
+// Get Blog Post Pagination Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Search Blog Posts By Title Code Starts
+// ============================================================
+async function searchBlogPostByTitle(searchText) {
+    devLogger.info(`[${FILE_NAME}] Search blog posts by title request started`);
+    try {
+        devLogger.info(`[${FILE_NAME}] Calling blog post service to search blog posts by title`);
+        const response = await httpClient.get(
+            `${BLOG_POST_SERVICE}/api/blog-post/read/search-by-title?searchText=${searchText}`
+        );
+
+        devLogger.info(`[${FILE_NAME}] Blog post title search response received successfully`);
+        devLogger.success(`[${FILE_NAME}] Blog post title search completed successfully`);
+
+        devLogger.info(`[${FILE_NAME}] Returning blog post title search response`);
+        return response.data;
+    } 
+    catch (error) {
+        devLogger.error(`[${FILE_NAME}] Failed to search blog posts by title`, error);
+        devLogger.warn(`[${FILE_NAME}] Blog post title search request could not be completed`);
+        throw createServiceError(BlogPostServiceErrorMessage.SEARCH_BLOG_POST_BY_TITLE_FAILED, error);
+    }
+};
+// ============================================================
+// Search Blog Posts By Title Code Ends
+// ============================================================
+
+
+
+// ===============================
+// User Routes
+// ===============================
+
+
+// ============================================================
+// Get All Blog Post IDs By User ID Code Starts
+// ============================================================
+async function getAllBlogPostIdsByUserId(userID){
+    devLogger.info(`[${FILE_NAME}] Get all blog post IDs by user ID request started`);
+    try{
+        devLogger.info(`[${FILE_NAME}] Calling blog post service to fetch all blog post IDs for user: ${userID}`);
+        const response = await httpClient.get(
+            `${BLOG_POST_SERVICE}/api/blog-post/user/userId/${userID}`
+        );
+
+        devLogger.info(`[${FILE_NAME}] All blog post IDs by user ID response received successfully`);
+        devLogger.success(`[${FILE_NAME}] All blog post IDs fetched successfully for user: ${userID}`);
+
+        devLogger.info(`[${FILE_NAME}] Returning all blog post IDs response`);
+        return response.data;
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to fetch all blog post IDs for user: ${userID}`, error);
+        devLogger.warn(`[${FILE_NAME}] Get all blog post IDs by user ID request could not be completed`);
+        throw createServiceError(BlogPostServiceErrorMessage.GET_ALL_BLOG_POST_IDS_BY_USER_ID_FAILED, error);
+    }
+};
+// ============================================================
+// Get All Blog Post IDs By User ID Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Get User Posts Pagination Code Starts
+// ============================================================
+async function getUserPostPagination(userID, params = {}){
+    devLogger.info(`[${FILE_NAME}] Get user posts pagination request started`);
+    try{
+        devLogger.info(`[${FILE_NAME}] Calling blog post service for user posts pagination`);
+        const response = await httpClient.get(
+            `${BLOG_POST_SERVICE}/api/blog-post/user/pagination/userId/${userID}`,
+            {
+                params
+            }
+        );
+
+        devLogger.info(`[${FILE_NAME}] User posts pagination response received successfully`);
+        devLogger.success(`[${FILE_NAME}] User posts pagination fetched successfully`);
+
+        devLogger.info(`[${FILE_NAME}] Returning user posts pagination response`);
+        return response.data;
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to fetch user posts`, error);
+        devLogger.warn(`[${FILE_NAME}] User posts pagination request could not be completed`);
+        throw createServiceError(BlogPostServiceErrorMessage.GET_USER_POST_PAGINATION_FAILED, error);
+    }
+};
+// ============================================================
+// Get User Posts Pagination Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Get Unique User IDs Code Starts
+// ============================================================
+async function getUniqueUserIds(){
+    devLogger.info(`[${FILE_NAME}] Get unique user IDs request started`);
+    try{
+        devLogger.info(`[${FILE_NAME}] Calling blog post service to fetch unique user IDs`);
+        const response = await httpClient.get(
+            `${BLOG_POST_SERVICE}/api/blog-post/user/unique-user-ids`
+        );
+
+        devLogger.info(`[${FILE_NAME}] Unique user IDs response received successfully`);
+        devLogger.success(`[${FILE_NAME}] Unique user IDs fetched successfully`);
+
+        devLogger.info(`[${FILE_NAME}] Returning unique user IDs response`);
+        return response.data;
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to fetch unique user IDs`, error);
+        devLogger.warn(`[${FILE_NAME}] Get unique user IDs request could not be completed`);
+        throw createServiceError(BlogPostServiceErrorMessage.GET_UNIQUE_USER_IDS_FAILED, error);
+    }
+};
+// ============================================================
+// Get Unique User IDs Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Get Unique Categories By User Code Starts
+// ============================================================
+async function getUniqueCategoriesByUser(userID){
+    devLogger.info(`[${FILE_NAME}] Get unique categories by user request started`);
+    try{
+        devLogger.info(`[${FILE_NAME}] Calling blog post service to fetch unique user categories`);
+        const response = await httpClient.get(
+            `${BLOG_POST_SERVICE}/api/blog-post/user/unique-categories/userId/${userID}`
+        );
+
+        devLogger.info(`[${FILE_NAME}] Unique categories by user response received successfully`);
+        devLogger.success(`[${FILE_NAME}] Unique categories by user fetched successfully`);
+
+        devLogger.info(`[${FILE_NAME}] Returning unique categories by user response`);
+        return response.data;
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to fetch user categories`, error);
+        devLogger.warn(`[${FILE_NAME}] Get unique categories by user request could not be completed`);
+        throw createServiceError(BlogPostServiceErrorMessage.GET_UNIQUE_CATEGORIES_BY_USER_FAILED, error);
+    }
+};
+// ============================================================
+// Get Unique Categories By User Code Ends
+// ============================================================
+
+
+
+// ===============================
+// Write Routes
+// ===============================
+
+
+// ============================================================
+// Add Blog Post Code Starts
+// ============================================================
+async function addBlogPost(data, token){
+    devLogger.info(`[${FILE_NAME}] Add blog post request started`);
+    try{
+        devLogger.info(`[${FILE_NAME}] Calling blog post service to create blog post`);
+        const response = await httpClient.post(
+            `${BLOG_POST_SERVICE}/api/blog-post/write/add`,
+            data,
+            {
+                headers:{
+                    Authorization:`Bearer ${token}`
+                }
+            }
+        );
+
+        devLogger.info(`[${FILE_NAME}] Blog post service returned add post response successfully`);
+        devLogger.success(`[${FILE_NAME}] Blog post created successfully`);
+
+        devLogger.info(`[${FILE_NAME}] Returning add blog post response`);
+        return response.data;
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to create blog post`, error);
+        devLogger.warn(`[${FILE_NAME}] Add blog post request could not be completed`);
+        throw createServiceError(BlogPostServiceErrorMessage.ADD_BLOG_POST_FAILED, error);
+    }
+};
+// ============================================================
+// Add Blog Post Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Delete Blog Post Code Starts
+// ============================================================
+async function deleteBlogPost(postID, token){
+    devLogger.warn(`[${FILE_NAME}] Delete blog post request started`);
+    try{
+        devLogger.info(`[${FILE_NAME}] Calling blog post service to delete blog post`);
+        const response = await httpClient.delete(
+            `${BLOG_POST_SERVICE}/api/blog-post/write/delete/postId/${postID}`,
+            {
+                headers:{
+                    Authorization:`Bearer ${token}`
+                }
+            }
+        );
+
+        devLogger.info(`[${FILE_NAME}] Blog post service returned delete post response successfully`);
+        devLogger.success(`[${FILE_NAME}] Blog post deleted successfully`);
+
+        devLogger.info(`[${FILE_NAME}] Returning delete blog post response`);
+        return response.data;
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to delete blog post`, error);
+        devLogger.warn(`[${FILE_NAME}] Delete blog post request could not be completed`);
+        throw createServiceError(BlogPostServiceErrorMessage.DELETE_BLOG_POST_FAILED, error);
+    }
+};
+// ============================================================
+// Delete Blog Post Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Delete Posts By User Code Starts
+// ============================================================
+async function deleteBlogPostsByUser(userID, token){
+    devLogger.warn(`[${FILE_NAME}] Delete blog posts by user request started`);
+    try{
+        devLogger.info(`[${FILE_NAME}] Calling blog post service to delete user blog posts`);
+        const response = await httpClient.delete(
+            `${BLOG_POST_SERVICE}/api/blog-post/write/delete-by-user/userId/${userID}`,
+            {
+                headers:{
+                    Authorization:`Bearer ${token}`
+                }
+            }
+        );
+
+        devLogger.info(`[${FILE_NAME}] Blog post service returned delete user posts response successfully`);
+        devLogger.success(`[${FILE_NAME}] User blog posts deleted successfully`);
+
+        devLogger.info(`[${FILE_NAME}] Returning delete user blog posts response`);
+        return response.data;
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to delete user blog posts`, error);
+        devLogger.warn(`[${FILE_NAME}] Delete user blog posts request could not be completed`);
+        throw createServiceError(BlogPostServiceErrorMessage.DELETE_BLOG_POSTS_BY_USER_FAILED, error);
+    }
+};
+// ============================================================
+// Delete Posts By User Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Update Blog Post Code Starts
+// ============================================================
+async function updateBlogPost(postID, data, token){
+    devLogger.info(`[${FILE_NAME}] Update blog post request started`);
+    try{
+        devLogger.info(`[${FILE_NAME}] Calling blog post service to update blog post`);
+        const response = await httpClient.put(
+            `${BLOG_POST_SERVICE}/api/blog-post/write/update/postId/${postID}`,
+            data,
+            {
+                headers:{
+                    Authorization:`Bearer ${token}`
+                }
+            }
+        );
+
+        devLogger.info(`[${FILE_NAME}] Blog post service returned update post response successfully`);
+        devLogger.success(`[${FILE_NAME}] Blog post updated successfully`);
+
+        devLogger.info(`[${FILE_NAME}] Returning update blog post response`);
+        return response.data;
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to update blog post`, error);
+        devLogger.warn(`[${FILE_NAME}] Update blog post request could not be completed`);
+        throw createServiceError(BlogPostServiceErrorMessage.UPDATE_BLOG_POST_FAILED, error);
+    }
+};
+// ============================================================
+// Update Blog Post Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Service Exports
+// ============================================================
+module.exports = {
+    getFourBlogPostByCategory,
+    getCategoryPostPagination,
+    getUniqueCategoryIds,
+    getUniqueUsersByCategory,
+
+    filterSortPagination,
+    filterSortPaginationByUser,
+    filterSortPaginationByCategory,
+
+    getAllBlogPosts,
+    getFourBlogPosts,
+    getBlogPostById,
+    getBlogPostPagination,
+    searchBlogPostByTitle,
+
+    getAllBlogPostIdsByUserId,
+    getUserPostPagination,
+    getUniqueUserIds,
+    getUniqueCategoriesByUser,
+
+    addBlogPost,
+    deleteBlogPost,
+    deleteBlogPostsByUser,
+    updateBlogPost
+};
+// ============================================================
+// Service Exports Ends
+// ============================================================

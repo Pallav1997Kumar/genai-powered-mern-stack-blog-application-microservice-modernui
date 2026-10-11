@@ -1,0 +1,364 @@
+const httpClient = require("../utils/http-client.js");
+const devLogger = require("../utils/dev-logger.js");
+
+const { USER_SERVICE } = require("../config/services.js");
+const createServiceError = require("../utils/service-error.js");
+const { UserServiceErrorMessage } = require("../constants/error-message.constant.js");
+
+
+const FILE_NAME = "blog-user.service.js";
+
+
+
+// ============================================================
+// Register User - starts
+// ============================================================
+async function registerUser(data){
+    devLogger.info(`[${FILE_NAME}] User registration request started`);
+    try {
+        devLogger.info(`[${FILE_NAME}] Calling user service registration API`);
+        const response = await httpClient.post(
+            `${USER_SERVICE}/api/users/register`,
+            data
+        );
+
+        devLogger.info(`[${FILE_NAME}] User registration API response received`);
+        devLogger.success(`[${FILE_NAME}] User registration completed successfully`);
+        return response.data;
+    } 
+    catch(error) {
+        devLogger.error(`[${FILE_NAME}] User registration failed`, error);
+        throw createServiceError(UserServiceErrorMessage.USER_REGISTRATION_FAILED, error);
+    }
+};
+// ============================================================
+// Register User - ends
+// ============================================================
+
+
+
+// ============================================================
+// Login User - starts
+// ============================================================
+async function loginUser(data){
+    devLogger.info(`[${FILE_NAME}] User login request started`);
+    try {
+        devLogger.info(`[${FILE_NAME}] Calling user service login API`);
+        const response = await httpClient.post(
+            `${USER_SERVICE}/api/users/login`,
+            data
+        );
+
+        devLogger.info(`[${FILE_NAME}] User login API response received`);
+        devLogger.info(`[${FILE_NAME}] Extracting authentication cookies`);
+
+        const result = {
+            data: response.data,
+            cookies: response.headers["set-cookie"]
+        };
+
+        devLogger.success(`[${FILE_NAME}] User login completed successfully`);
+        return result;
+    } 
+    catch(error) {
+        devLogger.error(`[${FILE_NAME}] User login failed`, error);
+        throw createServiceError(UserServiceErrorMessage.USER_LOGIN_FAILED, error);
+    }
+};
+// ============================================================
+// Login User - ends
+// ============================================================
+
+
+
+// ============================================================
+// Delete Account - starts
+// ============================================================
+async function deleteUser(userID, token){
+    devLogger.info(`[${FILE_NAME}] User account deletion request started`);
+    try {
+        devLogger.info(`[${FILE_NAME}] Calling user service delete account API`);
+        const response = await httpClient.delete(
+            `${USER_SERVICE}/api/users/id/${userID}`,
+            {
+                headers:{
+                    Cookie:`jwt_access_token=${token}`
+                }
+            }
+        );
+
+        devLogger.info(`[${FILE_NAME}] User account deletion API response received`);
+        devLogger.success(`[${FILE_NAME}] User account deleted successfully`);
+        return response.data;
+    } 
+    catch(error) {
+        devLogger.error(`[${FILE_NAME}] User account deletion failed`, error);
+        throw createServiceError(UserServiceErrorMessage.USER_ACCOUNT_DELETION_FAILED, error);
+    }
+};
+// ============================================================
+// Delete Account - ends
+// ============================================================
+
+
+
+// ============================================================
+// Logout - starts
+// ============================================================
+async function logout(cookie){
+    devLogger.info(`[${FILE_NAME}] User logout request started`);
+    try {
+        devLogger.info(`[${FILE_NAME}] Calling user service logout API`);
+        const response = await httpClient.post(
+            `${USER_SERVICE}/api/users/logout`,
+            {},
+            {
+                headers:{
+                    Cookie:cookie
+                }
+            }
+        );
+
+        devLogger.info(`[${FILE_NAME}] User logout API response received`);
+        devLogger.success(`[${FILE_NAME}] User logout completed successfully`);
+        return response.data;
+    } 
+    catch(error) {
+        devLogger.error(`[${FILE_NAME}] User logout failed`, error);
+        throw createServiceError(UserServiceErrorMessage.USER_LOGOUT_FAILED, error);
+    }
+};
+// ============================================================
+// Logout - ends
+// ============================================================
+
+
+
+// ============================================================
+// Update Profile Photo - starts
+// ============================================================
+async function updateUserProfilePhoto(userID, data, token){
+    devLogger.info(`[${FILE_NAME}] Profile photo update request started`);
+    try {
+        devLogger.info(`[${FILE_NAME}] Calling user service profile photo update API`);
+        const response = await httpClient.put(
+            `${USER_SERVICE}/api/users/update/profile-photo/${userID}`,
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        devLogger.info(`[${FILE_NAME}] Profile photo update API response received`);
+        devLogger.success(`[${FILE_NAME}] Profile photo updated successfully`);
+        return response.data;
+    } 
+    catch(error) {
+        devLogger.error(`[${FILE_NAME}] Profile photo update failed`, error);
+        throw createServiceError(UserServiceErrorMessage.PROFILE_PHOTO_UPDATE_FAILED, error);
+    }
+};
+// ============================================================
+// Update Profile Photo - ends
+// ============================================================
+
+
+
+// ============================================================
+// Update Basic Information - starts
+// ============================================================
+async function updateUserBasicInformation(userID, data, token){
+    devLogger.info(`[${FILE_NAME}] Basic information update request started`);
+    try {
+        devLogger.info(`[${FILE_NAME}] Calling user service basic information update API`);
+        const response = await httpClient.put(
+            `${USER_SERVICE}/api/users/update/basic-information/${userID}`,
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        devLogger.info(`[${FILE_NAME}] Basic information update API response received`);
+        devLogger.success(`[${FILE_NAME}] Basic information updated successfully`);
+        return response.data;
+    } 
+    catch(error) {
+        devLogger.error(`[${FILE_NAME}] Basic information update failed`, error);
+        throw createServiceError(UserServiceErrorMessage.BASIC_INFORMATION_UPDATE_FAILED, error);
+    }
+};
+// ============================================================
+// Update Basic Information - ends
+// ============================================================
+
+
+
+// ============================================================
+// Update Email Username - starts
+// ============================================================
+async function updateUserEmailUsername(userID, data, token){
+    devLogger.info(`[${FILE_NAME}] Email and username update request started`);
+    try {
+        devLogger.info(`[${FILE_NAME}] Calling user service email username update API`);
+        const response = await httpClient.put(
+            `${USER_SERVICE}/api/users/update/email-username/${userID}`,
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        devLogger.info(`[${FILE_NAME}] Email username update API response received`);
+        devLogger.success(`[${FILE_NAME}] Email and username updated successfully`);
+        return response.data;
+    } 
+    catch(error) {
+        devLogger.error(`[${FILE_NAME}] Email username update failed`, error);
+        throw createServiceError(UserServiceErrorMessage.EMAIL_USERNAME_UPDATE_FAILED, error);
+    }
+};
+// ============================================================
+// Update Email Username - ends
+// ============================================================
+
+
+
+// ============================================================
+// Update Password - starts
+// ============================================================
+async function updateUserPassword(userID, data, token){
+    devLogger.info(`[${FILE_NAME}] Password update request started`);
+    try {
+        devLogger.info(`[${FILE_NAME}] Calling user service password update API`);
+        const response = await httpClient.put(
+            `${USER_SERVICE}/api/users/update/password/${userID}`,
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        devLogger.info(`[${FILE_NAME}] Password update API response received`);
+        devLogger.success(`[${FILE_NAME}] Password updated successfully`);
+        return response.data;
+    } 
+    catch(error) {
+        devLogger.error(`[${FILE_NAME}] Password update failed`, error);
+        throw createServiceError(UserServiceErrorMessage.PASSWORD_UPDATE_FAILED, error);
+    }
+};
+// ============================================================
+// Update Password - ends
+// ============================================================
+
+
+
+// ============================================================
+// Get User By ID - starts
+// ============================================================
+async function getUserByID(userID){
+    devLogger.info(`[${FILE_NAME}] Fetch user by ID request started`);
+    try {
+        devLogger.info(`[${FILE_NAME}] Calling user service get user by ID API`);
+        const response = await httpClient.get(
+            `${USER_SERVICE}/api/users/id/${userID}`
+        );
+
+        devLogger.info(`[${FILE_NAME}] Get user by ID API response received`);
+        devLogger.success(`[${FILE_NAME}] User details fetched successfully`);
+        return response.data;
+    } 
+    catch(error) {
+        devLogger.error(`[${FILE_NAME}] Fetch user by ID failed`, error);
+        throw createServiceError(UserServiceErrorMessage.USER_FETCH_BY_ID_FAILED, error);
+    }
+};
+// ============================================================
+// Get User By ID - ends
+// ============================================================
+
+
+
+// ============================================================
+// Get User By Username - starts
+// ============================================================
+async function getUserByUsername(username){
+    devLogger.info(`[${FILE_NAME}] Fetch user by username request started`);
+    try {
+        devLogger.info(`[${FILE_NAME}] Calling user service get user by username API`);
+        const response = await httpClient.get(
+            `${USER_SERVICE}/api/users/username/${username}`
+        );
+
+        devLogger.info(`[${FILE_NAME}] Get user by username API response received`);
+        devLogger.success(`[${FILE_NAME}] User details fetched successfully`);
+        return response.data;
+    } 
+    catch(error) {
+        devLogger.error(`[${FILE_NAME}] Fetch user by username failed`, error);
+        throw createServiceError(UserServiceErrorMessage.USER_FETCH_BY_USERNAME_FAILED, error);
+    }
+};
+// ============================================================
+// Get User By Username - ends
+// ============================================================
+
+
+
+// ============================================================
+// Search User By Name - starts
+// ============================================================
+async function searchBlogUserByName(searchText, blogUsersId) {
+    devLogger.info(`[${FILE_NAME}] User search request started`);
+    try {
+        devLogger.info(`[${FILE_NAME}] Calling user service search user API`);
+        const response = await httpClient.post(
+            `${USER_SERVICE}/api/users/search?searchText=${searchText}`,
+            {
+                blogUsersId
+            }
+        );
+
+        devLogger.info(`[${FILE_NAME}] User search API response received`);
+        devLogger.success(`[${FILE_NAME}] User search completed successfully`);
+        return response.data;
+    } 
+    catch(error) {
+        devLogger.error(`[${FILE_NAME}] User search failed`, error);
+        throw createServiceError(UserServiceErrorMessage.USER_SEARCH_FAILED, error);
+    }
+};
+// ============================================================
+// Search User By Name - ends
+// ============================================================
+
+
+
+// ============================================================
+// Service Exports - starts
+// ============================================================
+module.exports = {
+    registerUser,
+    loginUser,
+    deleteUser,
+    logout,
+    updateUserProfilePhoto,
+    updateUserBasicInformation,
+    updateUserEmailUsername,
+    updateUserPassword,
+    getUserByID,
+    getUserByUsername,
+    searchBlogUserByName
+};
+// ============================================================
+// Service Exports - ends
+// ============================================================

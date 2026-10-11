@@ -1,0 +1,227 @@
+const httpClient = require("../utils/http-client.js");
+const devLogger = require("../utils/dev-logger.js");
+
+const { BLOG_COMMENT_SERVICE } = require("../config/services.js");
+const createServiceError = require("../utils/service-error.js");
+const { BlogCommentServiceErrorMessage } = require("../constants/error-message.constant.js");
+
+
+const FILE_NAME = "blog-comment.service.js";
+
+
+
+// ============================================================
+// Add New Comment For Post Code Starts
+// ============================================================
+async function addNewCommentForPostId(postID, data, token) {
+    devLogger.info(`[${FILE_NAME}] Add new comment for post request started`);
+    try {
+        devLogger.info(`[${FILE_NAME}] Calling blog comment service to add new comment`);
+        const response = await httpClient.post(
+            `${BLOG_COMMENT_SERVICE}/api/blog-comment/post/${postID}`,
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+        devLogger.info(`[${FILE_NAME}] Blog comment service returned add comment response successfully`);
+
+        devLogger.success(`[${FILE_NAME}] New comment added successfully`);
+        devLogger.info(`[${FILE_NAME}] Returning add comment response`);
+
+        return response.data;
+    }
+    catch(error) {
+        devLogger.error(`[${FILE_NAME}] Failed to add comment`, error);
+        devLogger.warn(`[${FILE_NAME}] Add comment request could not be completed`);
+        throw createServiceError(BlogCommentServiceErrorMessage.ADD_COMMENT_FAILED, error);
+    }
+}
+// ============================================================
+// Add New Comment For Post Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Update Comment By Comment ID Code Starts
+// ============================================================
+async function updateCommentByCommentId(commentID, data, token) {
+    devLogger.info(`[${FILE_NAME}] Update comment by comment ID request started`);
+    try {
+        devLogger.info(`[${FILE_NAME}] Calling blog comment service to update comment`);
+        const response = await httpClient.put(
+            `${BLOG_COMMENT_SERVICE}/api/blog-comment/comment/${commentID}`,
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+        devLogger.info(`[${FILE_NAME}] Blog comment service returned update comment response successfully`);
+
+        devLogger.success(`[${FILE_NAME}] Comment updated successfully`);
+        devLogger.info(`[${FILE_NAME}] Returning update comment response`);
+
+        return response.data;
+    }
+    catch(error) {
+        devLogger.error(`[${FILE_NAME}] Failed to update comment`, error);
+        devLogger.warn(`[${FILE_NAME}] Update comment request could not be completed`);
+        throw createServiceError(BlogCommentServiceErrorMessage.UPDATE_COMMENT_BY_ID_FAILED, error);
+    }
+}
+// ============================================================
+// Update Comment By Comment ID Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Delete Comment By Comment ID Code Starts
+// ============================================================
+async function deleteCommentByCommentId(commentID, token) {
+    devLogger.warn(`[${FILE_NAME}] Delete comment by comment ID request started`);
+    try {
+        devLogger.info(`[${FILE_NAME}] Calling blog comment service to delete comment`);
+        const response = await httpClient.delete(
+            `${BLOG_COMMENT_SERVICE}/api/blog-comment/comment/${commentID}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+        devLogger.info(`[${FILE_NAME}] Blog comment service returned delete comment response successfully`);
+
+        devLogger.success(`[${FILE_NAME}] Comment deleted successfully`);
+        devLogger.info(`[${FILE_NAME}] Returning delete comment response`);
+
+        return response.data;
+    }
+    catch(error) {
+        devLogger.error(`[${FILE_NAME}] Failed to delete comment`, error);
+        devLogger.warn(`[${FILE_NAME}] Delete comment request could not be completed`);
+        throw createServiceError(BlogCommentServiceErrorMessage.DELETE_COMMENT_BY_ID_FAILED, error);
+    }
+}
+// ============================================================
+// Delete Comment By Comment ID Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Get All Comments By Post ID Code Starts
+// ============================================================
+async function getAllCommentsByPostId(postID) {
+    devLogger.info(`[${FILE_NAME}] Get all comments by post ID request started`);
+    try {
+        devLogger.info(`[${FILE_NAME}] Calling blog comment service to fetch all comments`);
+        const response = await httpClient.get(
+            `${BLOG_COMMENT_SERVICE}/api/blog-comment/post/${postID}`
+        );
+        devLogger.info(`[${FILE_NAME}] Blog comment service returned comments successfully`);
+
+        devLogger.success(`[${FILE_NAME}] All comments fetched successfully`);
+        devLogger.info(`[${FILE_NAME}] Returning all comments response`);
+
+        return response.data;
+    }
+    catch(error) {
+        devLogger.error(`[${FILE_NAME}] Failed to fetch comments`, error);
+        devLogger.warn(`[${FILE_NAME}] Get all comments request could not be completed`);
+        throw createServiceError(BlogCommentServiceErrorMessage.FETCH_COMMENTS_BY_POSTID_FAILED, error);
+    }
+}
+// ============================================================
+// Get All Comments By Post ID Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Delete All Comments By User ID Code Starts
+// ============================================================
+async function deleteCommentsByUserId(userID, token) {
+    devLogger.warn(`[${FILE_NAME}] Delete all comments by user ID request started`);
+    try {
+        devLogger.info(`[${FILE_NAME}] Calling blog comment service to delete user's comments`);
+        const response = await httpClient.delete(
+            `${BLOG_COMMENT_SERVICE}/api/blog-comment/user/${userID}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+        devLogger.info(`[${FILE_NAME}] Blog comment service returned delete user's comments response successfully`);
+
+        devLogger.success(`[${FILE_NAME}] User comments deleted successfully`);
+        devLogger.info(`[${FILE_NAME}] Returning delete user's comments response`);
+
+        return response.data;
+    }
+    catch(error) {
+        devLogger.error(`[${FILE_NAME}] Failed to delete user's comments`, error);
+        devLogger.warn(`[${FILE_NAME}] Delete user's comments request could not be completed`);
+        throw createServiceError(BlogCommentServiceErrorMessage.DELETE_USER_COMMENTS_FAILED, error);
+    }
+}
+// ============================================================
+// Delete All Comments By User ID Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Delete All Comments By Post ID Code Starts
+// ============================================================
+async function deleteCommentsByPostId(postID, token) {
+    devLogger.warn(`[${FILE_NAME}] Delete all comments by post ID request started`);
+    try {
+        devLogger.info(`[${FILE_NAME}] Calling blog comment service to delete post comments`);
+        const response = await httpClient.delete(
+            `${BLOG_COMMENT_SERVICE}/api/blog-comment/post/${postID}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+        devLogger.info(`[${FILE_NAME}] Blog comment service returned delete post comments response successfully`);
+
+        devLogger.success(`[${FILE_NAME}] Post comments deleted successfully`);
+        devLogger.info(`[${FILE_NAME}] Returning delete post comments response`);
+
+        return response.data;
+    }
+    catch(error) {
+        devLogger.error(`[${FILE_NAME}] Failed to delete post comments`, error);
+        devLogger.warn(`[${FILE_NAME}] Delete post comments request could not be completed`);
+        throw createServiceError(BlogCommentServiceErrorMessage.DELETE_POST_COMMENTS_FAILED, error);
+    }
+}
+// ============================================================
+// Delete All Comments By Post ID Code Ends
+// ============================================================
+
+
+
+// ============================================================
+// Service Exports
+// ============================================================
+module.exports = {
+    addNewCommentForPostId,
+    updateCommentByCommentId,
+    deleteCommentByCommentId,
+    getAllCommentsByPostId,
+    deleteCommentsByUserId,
+    deleteCommentsByPostId
+};
+// ============================================================
+// Service Exports Ends
+// ============================================================
