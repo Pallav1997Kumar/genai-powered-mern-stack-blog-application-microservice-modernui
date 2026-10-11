@@ -1,0 +1,316 @@
+const ErrorMessage = require("../constants/error-message.constant.js");
+const SuccessMessage = require("../constants/success-message.constant.js");
+const profileService = require("../services/profile.service.js");
+const devLogger = require("../utils/dev-logger.js");
+
+const FILE_NAME = "user-update.controller.js";
+
+
+
+// ============================================================
+// Update User Profile Photo - starts
+// ============================================================
+async function updateUserProfilePhoto(req,res){
+    devLogger.info(`[${FILE_NAME}] Update user profile photo request received`);
+
+    try{
+        devLogger.info(`[${FILE_NAME}] Extracting user ID from request parameters`);
+        const userID = req.params.userID;
+
+        if (!userID) {
+            devLogger.warn(`[${FILE_NAME}] Profile photo update request received without user ID`);
+            throw {
+                success: false,
+                error: true,
+                successMessage: "",
+                errorMessage: ErrorMessage.USER_ID_REQUIRED,
+                errorData: null,
+                resultData: null,
+                status: 400
+            };
+        }
+
+        devLogger.info(`[${FILE_NAME}] Extracting authentication token from request headers`);
+        const authHeader = req.headers.authorization;
+        const token = authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
+
+        if (!token) {
+            devLogger.warn(`[${FILE_NAME}] Logout request received without authentication token`);
+            throw {
+                success: false,
+                error: true,
+                successMessage: "",
+                errorMessage: ErrorMessage.AUTH_TOKEN_REQUIRED,
+                errorData: null,
+                resultData: null,
+                status: 401
+            };
+        }
+
+        devLogger.info(`[${FILE_NAME}] Extracting imageDetails from request body`);
+        const imageDetail = req.body.imageDetail;
+
+        devLogger.info(`[${FILE_NAME}] Calling profile service to update user profile photo`);
+        const result = await profileService.updateUserProfilePhoto(userID, imageDetail);
+        
+        devLogger.success(`[${FILE_NAME}] User profile photo updated successfully`);
+        devLogger.info(`[${FILE_NAME}] Sending profile photo update response to client`);
+
+        return res.status(200).json({
+            success:true,
+            error:false,
+            successMessage:SuccessMessage.PROFILE_PHOTO_UPDATED,
+            errorMessage:"",
+            resultData:[]
+        });
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to update user profile photo`, error);
+        devLogger.warn(`[${FILE_NAME}] Update user profile photo request could not be completed`);
+
+        return res.status(error.status || 500).json({
+            success:false,
+            error:true,
+            successMessage:"",
+            errorMessage:error.message || ErrorMessage.INTERNAL_SERVER_ERROR,
+            resultData:[]
+        });
+    }
+}
+// ============================================================
+// Update User Profile Photo - ends
+// ============================================================
+
+
+
+// ============================================================
+// Update User Basic Information - starts
+// ============================================================
+async function updateUserBasicInformation(req,res){
+    devLogger.info(`[${FILE_NAME}] Update user basic information request received`);
+
+    try{
+        devLogger.info(`[${FILE_NAME}] Extracting user ID from request parameters`);
+        const userID = req.params.userID;
+
+        if (!userID) {
+            devLogger.warn(`[${FILE_NAME}] Profile photo update request received without user ID`);
+            throw {
+                success: false,
+                error: true,
+                successMessage: "",
+                errorMessage: "ErrorMessage.USER_ID_REQUIRED",
+                errorData: null,
+                resultData: null,
+                status: 400
+            };
+        }
+
+        devLogger.info(`[${FILE_NAME}] Extracting authentication token from request headers`);
+        const authHeader = req.headers.authorization;
+        const token = authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
+
+        if (!token) {
+            devLogger.warn(`[${FILE_NAME}] Logout request received without authentication token`);
+            throw {
+                success: false,
+                error: true,
+                successMessage: "",
+                errorMessage: ErrorMessage.AUTH_TOKEN_REQUIRED,
+                errorData: null,
+                resultData: null,
+                status: 401
+            };
+        }
+
+        devLogger.info(`[${FILE_NAME}] Calling profile service to update user basic information`);
+        const result = await profileService.updateUserBasicInformation(userID, req.body);
+
+        devLogger.success(`[${FILE_NAME}] User basic information updated successfully`);
+        devLogger.info(`[${FILE_NAME}] Sending basic information update response to client`);
+
+        return res.status(200).json({
+            success:true,
+            error:false,
+            successMessage:SuccessMessage.BASIC_INFORMATION_UPDATED,
+            errorMessage:"",
+            resultData:[]
+        });
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to update user basic information`, error);
+        devLogger.warn(`[${FILE_NAME}] Update user basic information request could not be completed`);
+
+        return res.status(error.status || 500).json({
+            success:false,
+            error:true,
+            successMessage:"",
+            errorMessage:error.message || ErrorMessage.INTERNAL_SERVER_ERROR,
+            resultData:[]
+        });
+    }
+}
+// ============================================================
+// Update User Basic Information - ends
+// ============================================================
+
+
+
+// ============================================================
+// Update User Email Username - starts
+// ============================================================
+async function updateUserEmailUsername(req,res){
+    devLogger.info(`[${FILE_NAME}] Update user email and username request received`);
+
+    try{
+        devLogger.info(`[${FILE_NAME}] Extracting user ID from request parameters`);
+        const userID = req.params.userID;
+
+        if (!userID) {
+            devLogger.warn(`[${FILE_NAME}] Profile photo update request received without user ID`);
+            throw {
+                success: false,
+                error: true,
+                successMessage: "",
+                errorMessage: "ErrorMessage.USER_ID_REQUIRED",
+                errorData: null,
+                resultData: null,
+                status: 400
+            };
+        }
+
+        devLogger.info(`[${FILE_NAME}] Extracting authentication token from request headers`);
+        const authHeader = req.headers.authorization;
+        const token = authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
+
+        if (!token) {
+            devLogger.warn(`[${FILE_NAME}] Logout request received without authentication token`);
+            throw {
+                success: false,
+                error: true,
+                successMessage: "",
+                errorMessage: ErrorMessage.AUTH_TOKEN_REQUIRED,
+                errorData: null,
+                resultData: null,
+                status: 401
+            };
+        }
+
+        devLogger.info(`[${FILE_NAME}] Calling profile service to update user email and username`);
+        const result = await profileService.updateUserEmailUsername(userID, req.body);
+
+        devLogger.success(`[${FILE_NAME}] User email and username updated successfully`);
+        devLogger.info(`[${FILE_NAME}] Sending email and username update response to client`);
+
+        return res.status(200).json({
+            success:true,
+            error:false,
+            successMessage:SuccessMessage.EMAIL_AND_USERNAME_UPDATED,
+            errorMessage:"",
+            resultData:[]
+        });
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to update user email and username`, error);
+        devLogger.warn(`[${FILE_NAME}] Update user email and username request could not be completed`);
+
+        return res.status(error.status || 500).json({
+            success:false,
+            error:true,
+            successMessage:"",
+            errorMessage:error.message || ErrorMessage.INTERNAL_SERVER_ERROR,
+            resultData:[]
+        });
+    }
+}
+// ============================================================
+// Update User Email Username - ends
+// ============================================================
+
+
+
+// ============================================================
+// Update User Password - starts
+// ============================================================
+async function updateUserPassword(req,res){
+    devLogger.info(`[${FILE_NAME}] Update user password request received`);
+
+    try{
+        devLogger.info(`[${FILE_NAME}] Extracting user ID from request parameters`);
+        const userID = req.params.userID;
+
+        if (!userID) {
+            devLogger.warn(`[${FILE_NAME}] Profile photo update request received without user ID`);
+            throw {
+                success: false,
+                error: true,
+                successMessage: "",
+                errorMessage: "ErrorMessage.USER_ID_REQUIRED",
+                errorData: null,
+                resultData: null,
+                status: 400
+            };
+        }
+
+        devLogger.info(`[${FILE_NAME}] Extracting authentication token from request headers`);
+        const authHeader = req.headers.authorization;
+        const token = authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
+
+        if (!token) {
+            devLogger.warn(`[${FILE_NAME}] Logout request received without authentication token`);
+            throw {
+                success: false,
+                error: true,
+                successMessage: "",
+                errorMessage: ErrorMessage.AUTH_TOKEN_REQUIRED,
+                errorData: null,
+                resultData: null,
+                status: 401
+            };
+        }
+
+        devLogger.info(`[${FILE_NAME}] Calling profile service to update user password`);
+        const result = await profileService.updateUserPassword(userID, req.body);
+
+        devLogger.success(`[${FILE_NAME}] User password updated successfully`);
+        devLogger.info(`[${FILE_NAME}] Sending password update response to client`);
+
+        return res.status(200).json({
+            success:true,
+            error:false,
+            successMessage:SuccessMessage.PASSWORD_UPDATED,
+            errorMessage:"",
+            resultData:[]
+        });
+    }
+    catch(error){
+        devLogger.error(`[${FILE_NAME}] Failed to update user password`, error);
+        devLogger.warn(`[${FILE_NAME}] Update user password request could not be completed`);
+
+        return res.status(error.status || 500).json({
+            success:false,
+            error:true,
+            successMessage:"",
+            errorMessage:error.message || ErrorMessage.INTERNAL_SERVER_ERROR,
+            resultData:[]
+        });
+    }
+}
+// ============================================================
+// Update User Password - ends
+// ============================================================
+
+
+
+// ============================================================
+// Controller Exports - starts
+// ============================================================
+module.exports = {
+    updateUserProfilePhoto: updateUserProfilePhoto,
+    updateUserBasicInformation: updateUserBasicInformation,
+    updateUserEmailUsername: updateUserEmailUsername,
+    updateUserPassword: updateUserPassword
+};
+// ============================================================
+// Controller Exports - ends
+// ============================================================
