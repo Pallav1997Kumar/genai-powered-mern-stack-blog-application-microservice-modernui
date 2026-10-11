@@ -1,0 +1,108 @@
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+
+import backendBaseURL from "../../backendBaseURL.js";
+import logger from "../../utils/logger.js";
+
+import CategoryCard from "./CategoryCard.jsx";
+
+
+function EachCategoryBlogPost(props) {
+
+    // ============================================================
+    // Get Category Details - starts
+    // ============================================================
+
+    const categoryDetails = props.categoryDetails;
+
+    // Get the selected blog category ID
+    const categoryID = categoryDetails._id;
+
+    // Create the card heading using the category name
+    const cardHeading = categoryDetails.categoryName.concat(" BLOGS");
+
+    // ============================================================
+    // Get Category Details - ends
+    // ============================================================
+
+
+
+    // ============================================================
+    // Blog Posts State - starts
+    // ============================================================
+
+    const [defaultBlogPosts, setDefaultBlogPosts] = useState([]);
+
+    // ============================================================
+    // Blog Posts State - ends
+    // ============================================================
+    
+
+
+    // ============================================================
+    // Fetch Category Blog Posts On Component Load - starts
+    // ============================================================
+
+    useEffect(function(){
+        // Fetch four blog posts for the selected category
+        fetchFourBlogPostParticularCategory();
+    }, []);
+
+    // ============================================================
+    // Fetch Category Blog Posts On Component Load - ends
+    // ============================================================
+
+
+
+    // ============================================================
+    // Fetch Four Blog Posts For Particular Category - starts
+    // ============================================================
+
+    async function fetchFourBlogPostParticularCategory() {
+        try{
+            // Fetch four blog posts with user and category information for the selected blog category
+			const response = await axios.get(
+				`${backendBaseURL}/api/blogPost/fourPostWithUserAndCategoryInfo/${categoryID}`
+			);
+            logger.log("Fetched four blog posts for category:", response);
+
+            const fourBlogPostsByCategoryResponse = response.data;
+            
+            if(fourBlogPostsByCategoryResponse.success){
+				const fourBlogPostsByCategory = fourBlogPostsByCategoryResponse.resultData;
+				setDefaultBlogPosts(fourBlogPostsByCategory);
+			}
+		}
+		catch(error){
+            logger.error("Error while fetching four blog posts for category:", error);
+		}
+    }
+
+    // ============================================================
+    // Fetch Four Blog Posts For Particular Category - ends
+    // ============================================================
+
+
+
+    
+    // ============================================================
+    // JSX Section - starts
+    // ============================================================
+
+    return (
+        <React.Fragment>
+            <CategoryCard 
+                cardHeading={cardHeading} 
+                blogsDisplay={defaultBlogPosts} 
+            />
+        </React.Fragment>
+    );
+
+    // ============================================================
+    // JSX Section - ends
+    // ============================================================
+    
+}
+
+
+export default EachCategoryBlogPost;

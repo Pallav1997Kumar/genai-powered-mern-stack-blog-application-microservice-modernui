@@ -1,0 +1,649 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+
+import axios from "axios";
+import Cookies from "js-cookie";
+
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import Button from "react-bootstrap/Button";
+import "../../style/write post/Write.scss";
+
+import backendBaseURL from "../../backendBaseURL.js";
+import logger from "../../utils/logger.js";
+import { getPlainText } from "../../utils/utility functions.js"
+import writeBlogPostImage from "../../images/blog-writing.jpg";
+
+
+function WriteBlogPost() {
+	
+	// ============================================================
+	// Navigation - starts
+	// ============================================================
+
+	const navigate = useNavigate();
+
+	// ============================================================
+	// Navigation - ends
+	// ============================================================
+
+
+
+	// ============================================================
+	// Blog Post State - starts
+	// ============================================================
+
+	// Store blog post input fields and AI suggestion states
+	const [title, setTitle] = useState("");
+	const [postDescription, setPostDescription] = useState("");
+	const [category, setCategory] = useState("");
+	const [blogImage, setBlogImage] = useState();
+
+	// Store AI-generated title suggestions and loading state
+	const [titleSuggestionsByAI, setTitleSuggestionsByAI] = useState([]);
+	const [isGeneratingTitles, setIsGeneratingTitles] = useState(false);
+
+	// Store AI-generated description suggestions and loading state
+	const [descriptionSuggestedByAI, setDescriptionSuggestedByAI] = useState(null);
+	const [isGeneratingDescriptions, setIsGeneratingDescriptions] = useState(false);
+
+	// Store AI-enhanced description and loading state
+	const [enhancementSuggestedByAI, setEnhancementSuggestedByAI] = useState(null);
+	const [isEnhancingDescriptions, setIsEnhancingDescriptions] = useState(false);
+
+	// Store success and error messages while creating the blog post
+	const [isErrorWhileUploading, setIsErrorWhileUploading] = useState(false);
+	const [successMessage, setSuccessMessage] = useState(null);
+	const [errorMessage, setErrorMessage] = useState(null);
+
+	// Store the state indicating whether a new blog post is being created
+	const [isCreatingPost, setIsCreatingPost] = useState(false);
+
+	// ============================================================
+	// Blog Post State - ends
+	// ============================================================
+
+
+
+	// ============================================================
+	// Redux - starts
+	// ============================================================
+
+	// Get blog category list from Redux store
+	const categoriesList = useSelector(
+		(categogiesListRedux) =>
+			categogiesListRedux.blogCategorySliceName.blogCategories
+	);
+
+	// Get logged-in user details from Redux store
+	const user = useSelector((user) => user.userSlice.userDetail);
+	const userID = user.userID;
+
+	// ============================================================
+	// Redux - ends
+	// ============================================================
+
+
+	
+	// ============================================================
+	// Check User Authentication - starts
+	// ============================================================
+
+	useEffect(function () {
+		// Redirect the user to login page if not authenticated
+		if (!localStorage.getItem("user")) {
+			navigate("/login");
+		}
+
+	}, []);
+
+	// ============================================================
+	// Check User Authentication - ends
+	// ============================================================
+
+
+
+	// ============================================================
+	// Navigate After Successful Post Creation - starts
+	// ============================================================
+
+	useEffect(function () {
+		// Navigate to the home page after showing the success message
+		if (successMessage !== null) {
+			setTimeout(() => {
+				navigate("/");
+			}, 3000);
+		}
+	}, [successMessage, navigate]);
+
+	// ============================================================
+	// Navigate After Successful Post Creation - ends
+	// ============================================================
+
+
+	
+	// ============================================================
+	// Upload Blog Image - starts
+	// ============================================================
+
+	async function handleUpload() {
+
+		const formData = new FormData();
+		formData.append("blogImage", blogImage);
+
+		try {
+
+			// Upload the selected blog image for the logged-in user
+			const response = await axios.post(
+				`${backendBaseURL}/api/imageUpload/blogImage?userID=${userID}`,
+				formData
+			);
+			logger.log("Blog image uploaded successfully:", response);
+			
+			const blogImageResponse = response.data;
+			if(blogImageResponse.success){
+				return blogImageResponse;
+			}
+		}
+		catch(error){
+			logger.error("Error while uploading blog image:", error);
+
+			const errorResponse = error?.response?.data;
+			const statusCode = error?.response?.status;	
+			if(errorResponse?.error){
+				setErrorMessage(errorResponse?.errorMessage);
+				setSuccessMessage(null);
+			}
+			else if(errorResponse?.message){
+				setErrorMessage(errorResponse?.message);
+				setSuccessMessage(null);
+			}
+			else{
+				setErrorMessage(error?.message);
+				setSuccessMessage(null);
+			}
+			setIsErrorWhileUploading(true);
+		}
+	}
+
+	// ============================================================
+	// Upload Blog Image - ends
+	// ============================================================
+
+
+
+	// ============================================================
+	// Submit New Blog Post - starts
+	// ============================================================
+	
+	async function submitHandler(event) {
+		event.preventDefault();
+
+		if(isCreatingPost){
+			return;
+		}
+
+		setIsCreatingPost(true);
+
+		// Upload the blog image before creating the blog post
+		const imageDetail = await handleUpload();
+
+		if(!imageDetail){
+			setIsCreatingPost(false);
+			return;
+		}
+
+		// Get authentication token from cookies
+		const token = Cookies.get("jwt_access_token");
+		
+		const values = { 
+			title, 
+			postDescription, 
+			category, 
+			imageDetail 
+		};
+		
+		try {
+			// Create a new blog post using the submitted details
+			logger.log("Creating new blog post with values:", values);
+			const response = await axios.post(
+				`${backendBaseURL}/api/blogPost/newPost/post`,
+				values,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`
+					}
+				}
+			);
+			logger.log("New blog post created successfully:", response);
+
+			const blogPostCreationResponse = response.data;
+
+			if(blogPostCreationResponse.success){
+				setSuccessMessage(blogPostCreationResponse.successMessage);
+				setTitle("");
+				setPostDescription("");
+				setBlogImage(null);
+				setCategory();
+				setErrorMessage(null);
+				setIsErrorWhileUploading(false);
+			}
+		} 
+		catch (error) {
+			logger.error("Error while creating new blog post:", error);
+
+			const errorResponse = error?.response?.data;
+			const statusCode = error?.response?.status;
+
+			if(errorResponse?.error){
+				if(statusCode === 417){
+					// Handle the validation error returned by the backend
+					setErrorMessage(errorResponse?.errorMessage);
+					setSuccessMessage(null);
+				}
+			}
+			else{
+				setErrorMessage(error.message);
+				setSuccessMessage(null);
+			}
+			setIsErrorWhileUploading(true);
+		}
+		finally {
+			setIsCreatingPost(false);
+		}
+		if (successMessage) {
+			setTimeout(() => {
+				navigate("/");
+			}, 3000);
+		}
+	}
+
+	
+	// ============================================================
+	// Generate AI Title Suggestions - starts
+	// ============================================================
+
+	async function generateTitleSuggestionsByGenAI() {
+		// Convert the blog description into plain text for the AI request
+		const postDescriptionText = getPlainText(postDescription);
+
+		const values = {
+			blogText: postDescriptionText
+		}
+
+		// Do not generate suggestions when the description is too short
+		if(postDescriptionText.trim().length < 30){
+			return;
+		}
+
+		setIsGeneratingTitles(true);
+		setTitleSuggestionsByAI([]);
+		
+		try {
+			// Generate blog title suggestions using the AI service
+			const response = await axios.post(
+				`${backendBaseURL}/api/generativeAI/suggestBlogTitlesFromBlogDescription`,
+				values
+			);
+			logger.log("AI generated blog title suggestions:", response);
+
+			const aiBlogTitleSuggestionResponse = response.data;
+			if(aiBlogTitleSuggestionResponse.success){
+				const aiSuggestedTitlesArray = aiBlogTitleSuggestionResponse.resultData;
+				setTitleSuggestionsByAI(aiSuggestedTitlesArray);
+			}
+		} 
+		catch (error) {
+			logger.error("Error while generating blog title suggestions:", error);
+			setTitleSuggestionsByAI([]);
+		}
+		finally {
+			setIsGeneratingTitles(false);
+		}
+	}
+	
+	// ============================================================
+	// Generate AI Title Suggestions - ends
+	// ============================================================
+
+
+
+	// ============================================================
+	// Generate Blog Description From Title - starts
+	// ============================================================
+
+	async function generateDescriptionFromTitle(){
+		const titleText = title;
+
+		// Do not generate a description when the title is too short
+		if(titleText.trim().length < 10){
+			return;
+		}
+
+		const values = {
+			blogTitle: titleText
+		}
+
+		setIsGeneratingDescriptions(true);
+		setDescriptionSuggestedByAI(null);
+		
+		try {
+
+			// Generate a blog description based on the current title
+			const response = await axios.post(
+				`${backendBaseURL}/api/generativeAI/suggestBlogDescriptionsFromTitle`,
+				values
+			);
+			logger.log("AI generated blog description from title:", response);
+
+			const aiSuggestedDescriptionResponse = response.data;
+			if(aiSuggestedDescriptionResponse.success){
+				const aiSuggestedDescription = aiSuggestedDescriptionResponse.resultData;
+				setDescriptionSuggestedByAI(aiSuggestedDescription);
+			}
+		} 
+		catch (error) {
+			logger.error("Error while generating blog description from title:", error);
+			setDescriptionSuggestedByAI(null);
+		}
+		finally {
+			setIsGeneratingDescriptions(false);
+		}
+	}
+	
+	// ============================================================
+	// Generate Blog Description From Title - ends
+	// ============================================================
+
+
+
+	// ============================================================
+	// Enhance Blog Description With AI - starts
+	// ============================================================
+
+	async function enhanceBlogDescription() {
+		// Convert the current blog description into plain text
+		const postDescriptionText = getPlainText(postDescription);
+		
+		const values = {
+			blogText: postDescriptionText
+		}
+		
+		// Do not enhance the description when it is too short
+		if(postDescriptionText.trim().length < 30){
+			return;
+		}
+		
+		setIsEnhancingDescriptions(true);
+		setEnhancementSuggestedByAI(null);
+		
+		try {
+			// Send the blog description to the AI enhancement service
+			const response = await axios.post(
+				`${backendBaseURL}/api/generativeAI/enhanceBlogDescription`,
+				values
+			);
+			logger.log("AI enhanced blog description:", response);
+
+			const aiEnhancedBlogDescriptionResponse = response.data;
+			if(aiEnhancedBlogDescriptionResponse.success){
+				const aiEnhancedBlogDescription = aiEnhancedBlogDescriptionResponse.resultData;
+				setEnhancementSuggestedByAI(aiEnhancedBlogDescription);
+			}
+		} 
+		catch (error) {
+			logger.error("Error while enhancing blog description with AI:", error);
+			setEnhancementSuggestedByAI(null);
+		}
+		finally {
+			setIsEnhancingDescriptions(false);
+		}
+	}
+
+	// ============================================================
+	// Enhance Blog Description With AI - ends
+	// ============================================================
+
+
+	
+
+	// ============================================================
+    // JSX Section - starts
+    // ============================================================
+	
+	return (
+		<div className="write-blog">
+			<section className="write-hero">
+				<div className="write-hero-content">
+					<span className="write-welcome-text">
+						Welcome {user !== null && user.fullName},
+					</span>
+					<h1>Write your blog here</h1>
+					<div className="write-hero-line"></div>
+				</div>
+
+				<div className="write-hero-image">
+					<img src={writeBlogPostImage} alt="Write Blog" />
+				</div>
+			</section>
+
+			<section className="write-form-card">
+				<form>
+					<div className="write-form-group">
+						<label>
+							<i className="bi bi-grid"></i>
+							Select Category
+						</label>
+
+						<select
+							value={category}
+							onChange={(event) => setCategory(event.target.value)}
+						>
+							<option value="">Please Select</option>
+							{categoriesList.map(function (categoryList) {
+								return (
+									<option
+										key={categoryList._id}
+										value={categoryList._id}
+									>
+										{categoryList.categoryName}
+									</option>
+								);
+							})}
+						</select>
+					</div>
+
+					<div className="write-form-group">
+						<label>
+							<i className="bi bi-type"></i>
+							Blog Title
+						</label>
+						<input
+							required
+							type="text"
+							value={title}
+							maxLength={100}
+							placeholder="Enter an attractive title for your blog"
+							onChange={(event) => setTitle(event.target.value)}
+						/>
+						<span className="write-character-count">
+							{title.length}/100
+						</span>
+					</div>
+
+					{titleSuggestionsByAI.length > 0 && (
+						<div className="write-title-suggestions">
+							<h4>AI Suggested Titles</h4>
+							<ul>
+								{titleSuggestionsByAI.map(
+									function (eachSuggestedTitle, index) {
+										return (
+											<li
+												key={index}
+												onClick={() =>
+													setTitle(eachSuggestedTitle)
+												}
+											>
+												{eachSuggestedTitle}
+											</li>
+										);
+									},
+								)}
+							</ul>
+						</div>
+					)}
+
+					<div className="write-form-group">
+						<label>
+							<i className="bi bi-card-text"></i>
+							Blog Description
+						</label>
+						<div className="write-react-quill">
+							<ReactQuill
+								theme="snow"
+								value={postDescription}
+								onChange={setPostDescription}
+							/>
+						</div>
+					</div>
+
+					{descriptionSuggestedByAI !== null && (
+						<div className="write-description-suggestions">
+							<h4>AI Suggested Description</h4>
+							<p>{descriptionSuggestedByAI}</p>
+						</div>
+					)}
+
+					{enhancementSuggestedByAI !== null && (
+						<div className="write-description-enhancement">
+							<h4>AI Enhanced Description</h4>
+							<p>{enhancementSuggestedByAI}</p>
+						</div>
+					)}
+
+					<div className="write-form-group">
+						<label>
+							<i className="bi bi-image"></i>
+							Upload the image
+						</label>
+
+						<div className="write-upload-box">
+							<input
+								required
+								type="file"
+								name="blogImage"
+								onChange={(event) =>
+									setBlogImage(event.target.files[0])
+								}
+							/>
+
+							<div className="write-upload-content">
+								<i className="bi bi-cloud-arrow-up"></i>
+								<div>
+									<h5>
+										{blogImage
+											? blogImage.name
+											: "Choose a file"}
+									</h5>
+									<p>
+										{blogImage
+											? `${(blogImage.size / 1024 / 1024).toFixed(2)} MB`
+											: "JPG, PNG or WEBP"}
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div className="write-ai-suggestions-section">
+						<div
+							className={`write-ai-card ${isGeneratingTitles ? "loading" : ""}`}
+							onClick={generateTitleSuggestionsByGenAI}
+						>
+							<div className="write-ai-icon purple">
+								<i className="bi bi-magic"></i>
+							</div>
+							<div className="write-ai-text">
+								<h5>
+									{isGeneratingTitles
+										? "Generating..."
+										: "Suggest Titles"}
+								</h5>
+								<p>Get AI suggested engaging titles.</p>
+							</div>
+							<i className="bi bi-arrow-right write-ai-arrow"></i>
+						</div>
+
+						<div
+							className={`write-ai-card ${isGeneratingDescriptions ? "loading" : ""}`}
+							onClick={generateDescriptionFromTitle}
+						>
+							<div className="write-ai-icon blue">
+								<i className="bi bi-file-earmark-text"></i>
+							</div>
+							<div className="write-ai-text">
+								<h5>
+									{isGeneratingDescriptions
+										? "Generating..."
+										: "Suggest Description"}
+								</h5>
+								<p>Generate a blog description from the title.</p>
+							</div>
+							<i className="bi bi-arrow-right write-ai-arrow"></i>
+						</div>
+
+						<div
+							className={`write-ai-card ${isEnhancingDescriptions ? "loading" : ""}`}
+							onClick={enhanceBlogDescription}
+						>
+							<div className="write-ai-icon pink">
+								<i className="bi bi-stars"></i>
+							</div>
+							<div className="write-ai-text">
+								<h5>
+									{isEnhancingDescriptions
+										? "Generating..."
+										: "Enhance Description"}
+								</h5>
+								<p>Improve your content using AI.</p>
+							</div>
+							<i className="bi bi-arrow-right write-ai-arrow"></i>
+						</div>
+					</div>
+
+					<div className="write-publish-section">
+						<Button
+							variant=""
+							className="write-publish-btn"
+							onClick={submitHandler}
+							disabled={isCreatingPost}
+						>
+							<i className="bi bi-send-fill"></i>
+							{isCreatingPost ? "Publishing Blog..." : "Publish your blog"}
+						</Button>
+					</div>
+
+					{isErrorWhileUploading ? (
+						<div className="write-error">
+							<p>{errorMessage}</p>
+						</div>
+					) : (
+						successMessage && (
+							<div className="write-success">
+								<p>{successMessage}</p>
+							</div>
+						)
+					)}
+				</form>
+			</section>
+		</div>
+	);
+
+	// ============================================================
+    // JSX Section - ends
+    // ============================================================
+
+}
+
+export default WriteBlogPost;
