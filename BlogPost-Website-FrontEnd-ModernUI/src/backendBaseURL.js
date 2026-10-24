@@ -1,13 +1,7 @@
 const localBackendBaseURL = process.env.REACT_APP_BACKEND_LOCAL_BASEURL;
-const productionBackendBaseURL = process.env.REACT_APP_BACKEND_PRODUCTION_BASEURL;;
 
-let backendBaseURL;
+const productionBackendBaseURL = process.env.REACT_APP_BACKEND_PRODUCTION_BASEURL;
 
-if(process.env.REACT_APP_ENVIRONMENT === "DEVELOPMENT"){
-    backendBaseURL = localBackendBaseURL;
-}
-else if(process.env.REACT_APP_ENVIRONMENT === "PRODUCTION"){
-    backendBaseURL = productionBackendBaseURL;
-}
+const backendBaseURL = process.env.NODE_ENV === "development" ? localBackendBaseURL : productionBackendBaseURL;
 
 export default backendBaseURL;

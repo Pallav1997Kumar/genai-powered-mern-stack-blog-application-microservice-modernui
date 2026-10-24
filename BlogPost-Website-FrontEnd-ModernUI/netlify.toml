@@ -1,7 +1,6 @@
 [build]
   command = "CI=false npm run build"
   publish = "build"
-  SECRETS_SCAN_OMIT_KEYS = "REACT_APP_ENVIRONMENT"
 
 [[redirects]]
   from = "/*"
